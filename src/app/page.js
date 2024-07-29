@@ -89,6 +89,21 @@ export default function Home() {
         return data_obj;
     }
 
+
+    const getTimeDifferenceInHoursAndMinutes = (startTimeString, endTimeString) => {
+        // Parse the input strings into Date objects
+        const startTime = new Date(startTimeString);
+        const endTime = new Date(endTimeString);
+        // Calculate the time difference in milliseconds
+        const timeDifferenceMs = endTime - startTime;
+        // Convert milliseconds to hours
+        const hours = Math.floor(timeDifferenceMs / (1000 * 60 * 60));
+        // Calculate remaining minutes
+        const minutes = Math.floor((timeDifferenceMs % (1000 * 60 * 60)) / (1000 * 60));
+        const padZero = (num) => num.toString().padStart(2, '0');
+        return { hours: padZero(hours), minutes: padZero(minutes) };
+    }
+
     return (
         <>
             <div>
@@ -104,45 +119,64 @@ export default function Home() {
                     let departure_formated_date = dateFormat(routs?.departure_time)
                     let arrival_time_formated_date = dateFormat(routs?.arrival_time)
 
+                    const timeDifference = getTimeDifferenceInHoursAndMinutes(routs?.departure_time, routs?.arrival_time);
+
 
                     return (<>
-                        <div className="grid grid-cols-5 gap-4">
-                            <div className="">
-                                <p> {img_src && (<Image src={img_src} height={66} width={66} loading="lazy"
-                                    className="h-5" />)}</p>
-                                <p> {routs?.operating?.carrier_name}</p>
-                                <p>
-                                    booking_class - {routs?.booking_class?.cabin_class}
-                                </p>
-                                <p>
-                                    aircraft - {routs?.aircraft?.code}
-                                </p>
-                                <p>
-                                    includedBaggage - {routs?.includedBaggage}
-                                </p>
+                        <div className="flex flex-col items-center gap-12 px-3 py-4 sm:flex-row justify-evenly gap-x-5 md:gap-x-8">
+
+                            <div className="flex gap-3 sm:col-span-2">
+                                <div className="w-16">
+                                    {img_src && (<Image src={img_src} height={66} width={66} loading="lazy"
+                                    />)}
+                                </div>
+
+                                <div>
+                                    <h5> {routs?.operating?.carrier_name}</h5>
+                                    <p>
+                                        booking_class - {routs?.booking_class?.cabin_class}
+                                    </p>
+                                    <p>
+                                        aircraft - {routs?.aircraft?.code}
+                                    </p>
+                                    <p>
+                                        includedBaggage - {routs?.includedBaggage}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="">
-                                <p>
-                                    {departure_formated_date?.hour}:{departure_formated_date?.minutes}
-                                    <br />
-                                    {departure_formated_date?.dayOfWeek}, {departure_formated_date?.month} {departure_formated_date?.dayOfMonth}  {departure_formated_date?.year}
-                                </p>
-                                <p>
+                            <div className="text-center">
+                                <h4 className="text-2xl font-bold"> {departure_formated_date?.hour}:{departure_formated_date?.minutes}</h4>
+                                <p className="text-xs text-neutral"> {departure_formated_date?.dayOfWeek}, {departure_formated_date?.month} {departure_formated_date?.dayOfMonth}  {departure_formated_date?.year}</p>
+
+                                <h3 className="font-medium">
                                     {routs?.origin_airport?.city}
-                                </p>
-                                <p>
+                                </h3>
+                                <p className="text-xs text-neutral">
                                     {routs?.origin_airport?.name}
                                 </p>
                             </div>
-                            <div className=""> {flight_group?.no_of_stops_title}</div>
                             <div className="">
-                                <p>
-                                    {arrival_time_formated_date?.hour}:{arrival_time_formated_date?.minutes}
-                                    <br />
+                                {timeDifference.hours}H {timeDifference.minutes}M
+
+
+                                <br />
+                                {flight_group?.no_of_stops_title}
+
+                            </div>
+                            <div className="text-center">
+                                <h4 className="text-2xl font-bold"> {arrival_time_formated_date?.hour}:{arrival_time_formated_date?.minutes}</h4>
+                                <p className="text-xs text-neutral">
                                     {arrival_time_formated_date?.dayOfWeek}, {arrival_time_formated_date?.month} {arrival_time_formated_date?.dayOfMonth}  {arrival_time_formated_date?.year}
                                 </p>
-                                <p> {routs?.destination_airport?.city}</p>
-                                <p>{routs?.destination_airport?.name}</p>
+
+                                <h3 className="font-medium">
+                                    {routs?.destination_airport?.city}
+                                </h3>
+                                <p className="text-xs text-neutral">
+                                    {routs?.destination_airport?.name}
+                                </p>
+
+
                             </div>
                             <div className="">
                                 <p> {value[1]?.price?.total?.amount}</p>
