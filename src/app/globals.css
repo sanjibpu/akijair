@@ -28,3 +28,9 @@ body {
     text-wrap: balance;
   }
 }
+
+
+.tooltip-visible {
+  visibility: visible;
+  opacity: 1;
+}

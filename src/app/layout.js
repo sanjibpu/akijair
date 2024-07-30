@@ -12,7 +12,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="container mx-auto min-h-screen pt-5">
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

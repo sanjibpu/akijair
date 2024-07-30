@@ -3,12 +3,16 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import Tooltip from "@/components/Tooltip";
 
 
 export default function Home() {
     const [flights, setFlights] = useState([]);
     const [flightsResource, setFlightsResource] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const fetchFlights = async () => {
@@ -104,10 +108,12 @@ export default function Home() {
         return { hours: padZero(hours), minutes: padZero(minutes) };
     }
 
+
     return (
         <>
-            <div>
-                {loading && (<div>Loading...</div>)}
+            <div className="mb-16">
+                {loading && (<div className="text-2xl">Loading...</div>)}
+                {!loading && (<div className="text-2xl mb-10"> Flights Data Grid  </div>)}
                 {Object.entries(flights).map((value, key) => {
 
                     let flight_group = value[1]?.flight_group[0];
@@ -123,66 +129,64 @@ export default function Home() {
 
 
                     return (<>
-                        <div className="flex flex-col items-center gap-12 px-3 py-4 sm:flex-row justify-evenly gap-x-5 md:gap-x-8">
+                        <div className="rounded-md shadow-md bg-base-200 hover:shadow-lg hover:ring-primary/50 single-data mb-5">
 
-                            <div className="flex gap-3 sm:col-span-2">
-                                <div className="w-16">
-                                    {img_src && (<Image src={img_src} height={66} width={66} loading="lazy"
-                                    />)}
+                            <div className="flex flex-col items-center gap-4 px-3 py-4 sm:flex-row justify-evenly gap-x-5 md:gap-x-8">
+
+                                <div className="flex gap-3 sm:col-span-2">
+                                    <div className="w-16">
+                                        {img_src && (<Image src={img_src} height={66} width={66} loading="lazy"
+                                        />)}
+                                    </div>
+
+                                    <div>
+                                        <h5> {routs?.operating?.carrier_name}</h5>
+                                        <div>
+                                            <Tooltip routs={routs} img={img_src} />
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <h4 className="text-2xl font-bold"> {departure_formated_date?.hour}:{departure_formated_date?.minutes}</h4>
+                                    <p className="text-xs text-neutral"> {departure_formated_date?.dayOfWeek}, {departure_formated_date?.month} {departure_formated_date?.dayOfMonth}  {departure_formated_date?.year}</p>
+
+                                    <h3 className="font-medium">
+                                        {routs?.origin_airport?.city}
+                                    </h3>
+                                    <p className="text-xs text-neutral">
+                                        {routs?.origin_airport?.name}
+                                    </p>
+                                </div>
+                                <div className="">
+                                    {timeDifference.hours}H {timeDifference.minutes}M
+
+
+                                    <br />
+                                    {flight_group?.no_of_stops_title}
+
+                                </div>
+                                <div className="text-center">
+                                    <h4 className="text-2xl font-bold"> {arrival_time_formated_date?.hour}:{arrival_time_formated_date?.minutes}</h4>
+                                    <p className="text-xs text-neutral">
+                                        {arrival_time_formated_date?.dayOfWeek}, {arrival_time_formated_date?.month} {arrival_time_formated_date?.dayOfMonth}  {arrival_time_formated_date?.year}
+                                    </p>
+
+                                    <h3 className="font-medium">
+                                        {routs?.destination_airport?.city}
+                                    </h3>
+                                    <p className="text-xs text-neutral">
+                                        {routs?.destination_airport?.name}
+                                    </p>
+
+
+                                </div>
+                                <div className="">
+                                    <h4 className="mb-1 text-lg font-bold"> {value[1]?.price?.total?.amount.toLocaleString()}</h4>
+                                    <p> {value[1]?.price?.total?.currency}</p>
                                 </div>
 
-                                <div>
-                                    <h5> {routs?.operating?.carrier_name}</h5>
-                                    <p>
-                                        booking_class - {routs?.booking_class?.cabin_class}
-                                    </p>
-                                    <p>
-                                        aircraft - {routs?.aircraft?.code}
-                                    </p>
-                                    <p>
-                                        includedBaggage - {routs?.includedBaggage}
-                                    </p>
-                                </div>
                             </div>
-                            <div className="text-center">
-                                <h4 className="text-2xl font-bold"> {departure_formated_date?.hour}:{departure_formated_date?.minutes}</h4>
-                                <p className="text-xs text-neutral"> {departure_formated_date?.dayOfWeek}, {departure_formated_date?.month} {departure_formated_date?.dayOfMonth}  {departure_formated_date?.year}</p>
-
-                                <h3 className="font-medium">
-                                    {routs?.origin_airport?.city}
-                                </h3>
-                                <p className="text-xs text-neutral">
-                                    {routs?.origin_airport?.name}
-                                </p>
-                            </div>
-                            <div className="">
-                                {timeDifference.hours}H {timeDifference.minutes}M
-
-
-                                <br />
-                                {flight_group?.no_of_stops_title}
-
-                            </div>
-                            <div className="text-center">
-                                <h4 className="text-2xl font-bold"> {arrival_time_formated_date?.hour}:{arrival_time_formated_date?.minutes}</h4>
-                                <p className="text-xs text-neutral">
-                                    {arrival_time_formated_date?.dayOfWeek}, {arrival_time_formated_date?.month} {arrival_time_formated_date?.dayOfMonth}  {arrival_time_formated_date?.year}
-                                </p>
-
-                                <h3 className="font-medium">
-                                    {routs?.destination_airport?.city}
-                                </h3>
-                                <p className="text-xs text-neutral">
-                                    {routs?.destination_airport?.name}
-                                </p>
-
-
-                            </div>
-                            <div className="">
-                                <p> {value[1]?.price?.total?.amount}</p>
-                                <p> {value[1]?.price?.total?.currency}</p>
-                            </div>
-
                         </div>
                     </>);
                 })}
